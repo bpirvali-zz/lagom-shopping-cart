@@ -23,17 +23,17 @@ class ShoppingcartEntitySpec extends WordSpec with Matchers with BeforeAndAfterA
 
   "ShoppingCart entity" should {
 
-    "say hello by default" in withTestDriver { driver =>
-      val outcome = driver.run(Hello("Alice"))
-      outcome.replies should contain only "Hello, Alice!"
-    }
+//    "say hello by default" in withTestDriver { driver =>
+//      val outcome = driver.run(Hello("Alice"))
+//      outcome.replies should contain only "Hello, Alice!"
+//    }
 
-    "allow updating the greeting message" in withTestDriver { driver =>
-      val outcome1 = driver.run(UseGreetingMessage("Hi"))
-      outcome1.events should contain only GreetingMessageChanged("Hi")
-      val outcome2 = driver.run(Hello("Alice"))
-      outcome2.replies should contain only "Hi, Alice!"
-    }
+//    "allow updating the greeting message" in withTestDriver { driver =>
+//      val outcome1 = driver.run(UseGreetingMessage("Hi"))
+//      outcome1.events should contain only GreetingMessageChanged("Hi")
+//      val outcome2 = driver.run(Hello("Alice"))
+//      outcome2.replies should contain only "Hi, Alice!"
+//    }
 
   }
 }
