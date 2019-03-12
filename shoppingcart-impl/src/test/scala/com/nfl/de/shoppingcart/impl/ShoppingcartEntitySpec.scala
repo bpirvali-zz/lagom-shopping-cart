@@ -16,6 +16,7 @@ class ShoppingcartEntitySpec extends WordSpec with Matchers with BeforeAndAfterA
   }
 
   private def withTestDriver(block: PersistentEntityTestDriver[ShoppingcartCommand[_], ShoppingcartEvent, ShoppingcartState] => Unit): Unit = {
+
     val driver = new PersistentEntityTestDriver(system, new ShoppingcartEntity, "shoppingcart-1")
     block(driver)
     driver.getAllIssues should have size 0

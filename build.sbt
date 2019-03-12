@@ -30,3 +30,8 @@ lazy val `shoppingcart-impl` = (project in file("shoppingcart-impl"))
   )
   .settings(lagomForkedTestSettings: _*)
   .dependsOn(`shoppingcart-api`)
+
+//lagomCassandraCleanOnStart :=true
+lagomCassandraCleanOnStart in ThisBuild := true
+//lagomCassandraEnabled in ThisBuild := false
+//lagomUnmanagedServices in ThisBuild := Map("cas_native" -> "http://localhost:9042")

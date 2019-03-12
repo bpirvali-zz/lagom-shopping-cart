@@ -11,6 +11,8 @@ import play.api.libs.json.{Format, Json}
 import scala.collection.immutable.Seq
 
 case class AddedToCartEvent(product: String) extends ShoppingcartEvent
+case class RemovedFromCartEvent(product: String) extends ShoppingcartEvent
+
 case object ShowCartCommand extends ShoppingcartCommand[List[String]]
 class ShoppingcartEntity extends PersistentEntity {
 
@@ -28,20 +30,34 @@ class ShoppingcartEntity extends PersistentEntity {
     * is a function of the current state to a set of actions.
     */
   override def behavior: Behavior = {
-    //case ShoppingcartState(_) => Actions()
     case ShoppingcartState(products) => Actions()
-      .onCommand[AddToCartCommand, Done] {
-      case (AddToCartCommand(product), context, state) =>
+
+    // add-to-cart
+    .onCommand[AddToCartCommand, Done] {
+    case (AddToCartCommand(product), context, state) =>
+      context.thenPersist(
+        AddedToCartEvent(product)
+      ) { _ =>
+        context.reply(Done)
+      }
+
+    // remove-from-cart
+    }.onCommand[RemoveFromCartCommand, Done] {
+      case (RemoveFromCartCommand(product), context, state) =>
         context.thenPersist(
-          AddedToCartEvent(product)
+          RemovedFromCartEvent(product)
         ) { _ =>
           context.reply(Done)
         }
+
+    // show-cart
     }.onReadOnlyCommand[ShowCartCommand.type, List[String]] {
       case (ShowCartCommand, context, state) => context.reply(state.products)
 
     }.onEvent {
       case (AddedToCartEvent(product), state) => ShoppingcartState(product :: state.products)
+      case (RemovedFromCartEvent(product), state) =>
+        ShoppingcartState(state.products.filterNot(_ == product))
     }
 
   }
@@ -81,7 +97,7 @@ object ShoppingcartEvent {
   */
 sealed trait ShoppingcartCommand[R] extends ReplyType[R]
 final case class AddToCartCommand(product: String) extends ShoppingcartCommand[Done]
-
+case class RemoveFromCartCommand(product: String) extends ShoppingcartCommand[Done]
 
 /**
   * Akka serialization, used by both persistence and remoting, needs to have
