@@ -35,10 +35,10 @@ class ShoppingcartServiceSpec extends AsyncWordSpec with Matchers with BeforeAnd
     list should === (List())
   }
 
-  val fun3 = (rh: ResponseHeader, res: List[String]) => {
-    assert(rh.status==200)
-    res
-  }
+//  val fun3 = (rh: ResponseHeader, res: List[String]) => {
+//    assert(rh.status==200)
+//    res
+//  }
 
   "ShoppingCart service" should {
       "return an empty list" in {
@@ -46,16 +46,25 @@ class ShoppingcartServiceSpec extends AsyncWordSpec with Matchers with BeforeAnd
       }
 
       "return an empty list with 200" in {
-        client.showCart("123").withResponseHeader.invoke()map { fun1.tupled(_) }
+        client.showCart("123").withResponseHeader.invoke()map {
+          //fun1.tupled(_)
+          case (rh, list) =>
+            assert(list==List() && rh.status==200)
+        }
       }
 
       "return an empty list with 200-2" in {
         client.showCart("123").handleResponseHeader {
-          fun3(_,_)
+          //fun3(_,_)
           //(rh, res) => fun3(rh, res)
 //          case (rh, response) =>
 //            assert(rh.status==200)
 //            response
+
+          (rh, res) => {
+            assert(rh.status==200)
+            res
+          }
         }
           .invoke()
           .map { fun2(_) }
